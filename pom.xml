@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.1.4</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>dev.vivekraman</groupId>
+	<artifactId>backend-module-template</artifactId> <!-- TODO: update parent artifact ID -->
+<!--	<version>1.0-rc1</version>-->
+	<version>2.0-rc2</version> <!-- TODO: remove this and uncomment the above line -->
+	<packaging>pom</packaging>
+	<name>backend-module-template</name> <!-- TODO: update parent artifact name -->
+	<description>Template backend module to be used with monolith-platform</description> <!-- TODO: update description -->
+	<modules>
+		<module>template</module> <!-- TODO: update module name -->
+		<module>module-app</module> <!-- TODO: update module app name -->
+	</modules>
+	<properties>
+		<java.version>21</java.version>
+		<monolith-common.version>2.0-rc4</monolith-common.version>
+		<springdoc.version>2.1.0</springdoc.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+				<version>${springdoc.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dev.vivekraman</groupId>
+				<artifactId>monolith-model</artifactId>
+				<version>${monolith-common.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dev.vivekraman</groupId>
+				<artifactId>monolith-base</artifactId>
+				<version>${monolith-common.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dev.vivekraman</groupId>
+				<artifactId>template</artifactId> <!-- TODO: update module artifact ID -->
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<repositories>
+		<repository>
+			<id>github</id>
+			<name>GitHub - Vivek Raman</name>
+			<url>https://maven.pkg.github.com/Vivek-Raman/artifacts</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub - Vivek Raman - Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/Vivek-Raman/artifacts</url>
+		</repository>
+	</distributionManagement>
+</project>
