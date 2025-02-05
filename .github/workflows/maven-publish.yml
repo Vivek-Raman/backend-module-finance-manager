@@ -38,8 +38,8 @@ jobs:
         servers: |
           [{
             "id": "github",
-            "username": "${{ secrets.PUBLISH_USERNAME }}", # TODO: Add to GitHub actions secrets
-            "password": "${{ secrets.PUBLISH_TOKEN }}" # TODO: Add to GitHub actions secrets, you know where to get it from
+            "username": "${{ secrets.PUBLISH_USERNAME }}",
+            "password": "${{ secrets.PUBLISH_TOKEN }}"
           }]
 
     - name: Publish to GitHub Packages - Apache Maven

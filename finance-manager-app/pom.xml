@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>dev.vivekraman</groupId>
+    <artifactId>backend-module-finance-manager</artifactId>
+   <version>1.0-rc1</version>
+  </parent>
+
+  <artifactId>finance-manager-app</artifactId>
+
+  <properties>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.r2dbc</groupId>
+      <artifactId>r2dbc-h2</artifactId>
+      <version>1.0.0.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.vivekraman</groupId>
+      <artifactId>monolith-model</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.vivekraman</groupId>
+      <artifactId>monolith-base</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>dev.vivekraman</groupId>
+      <artifactId>monolith-auth</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>dev.vivekraman</groupId>
+      <artifactId>finance-manager</artifactId>
+    </dependency>
+  </dependencies>
+</project>

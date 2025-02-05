@@ -9,19 +9,18 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>dev.vivekraman</groupId>
-	<artifactId>backend-module-template</artifactId> <!-- TODO: update parent artifact ID -->
-<!--	<version>1.0-rc1</version>-->
-	<version>2.0-rc2</version> <!-- TODO: remove this and uncomment the above line -->
+	<artifactId>backend-module-finance-manager</artifactId>
+	<version>1.0-rc1</version>
 	<packaging>pom</packaging>
-	<name>backend-module-template</name> <!-- TODO: update parent artifact name -->
-	<description>Template backend module to be used with monolith-platform</description> <!-- TODO: update description -->
+	<name>backend-module-finance-manager</name>
+	<description>Consumes, parses, and schedules data fetches related to Vivek's finances.</description>
 	<modules>
-		<module>template</module> <!-- TODO: update module name -->
-		<module>module-app</module> <!-- TODO: update module app name -->
+		<module>finance-manager</module>
+		<module>finance-manager-app</module>
 	</modules>
 	<properties>
 		<java.version>21</java.version>
-		<monolith-common.version>2.0-rc4</monolith-common.version>
+		<monolith-common.version>2.2-rc2</monolith-common.version>
 		<springdoc.version>2.1.0</springdoc.version>
 	</properties>
 	<dependencies>
@@ -61,7 +60,12 @@
 			</dependency>
 			<dependency>
 				<groupId>dev.vivekraman</groupId>
-				<artifactId>template</artifactId> <!-- TODO: update module artifact ID -->
+				<artifactId>monolith-auth</artifactId>
+				<version>${monolith-common.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dev.vivekraman</groupId>
+				<artifactId>finance-manager</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
