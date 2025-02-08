@@ -3,9 +3,6 @@ package dev.vivekraman.finance.manager.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -19,11 +16,9 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 
 import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
 import com.opencsv.exceptions.CsvValidationException;
 
 import dev.vivekraman.finance.manager.service.api.ParserService;
-import dev.vivekraman.monolith.security.util.AuthUtils;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
