@@ -50,6 +50,12 @@
       <version>${monolith-common.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>dev.vivekraman</groupId>
+      <artifactId>monolith-auth</artifactId>
+      <version>${monolith-common.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>com.opencsv</groupId>
