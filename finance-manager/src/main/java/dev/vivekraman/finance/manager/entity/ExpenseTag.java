@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import dev.vivekraman.finance.manager.model.enums.ExpenseTags;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

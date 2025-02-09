@@ -1,7 +1,6 @@
 package dev.vivekraman.finance.manager.model;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

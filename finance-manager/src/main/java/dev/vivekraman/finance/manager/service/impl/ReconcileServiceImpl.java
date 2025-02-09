@@ -3,11 +3,9 @@ package dev.vivekraman.finance.manager.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import dev.vivekraman.finance.manager.model.IngestMetadata;
-import dev.vivekraman.finance.manager.repository.ExpenseRepository;
 import dev.vivekraman.finance.manager.service.api.ExpenseTagService;
 import dev.vivekraman.finance.manager.service.api.ReconcileService;
 import lombok.RequiredArgsConstructor;

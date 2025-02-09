@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.vivekraman.finance.manager.config.Constants;
-import dev.vivekraman.finance.manager.entity.User;
 import dev.vivekraman.finance.manager.model.request.RegisterUserRequestDTO;
 import dev.vivekraman.finance.manager.model.response.UserDTO;
 import dev.vivekraman.finance.manager.service.api.UserService;

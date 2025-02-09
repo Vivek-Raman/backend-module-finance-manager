@@ -1,6 +1,5 @@
 package dev.vivekraman.finance.manager.service.impl;
 
-import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import dev.vivekraman.finance.manager.entity.Expense;
 import dev.vivekraman.finance.manager.entity.ExpenseTag;
-import dev.vivekraman.finance.manager.model.enums.ExpenseTags;
 import dev.vivekraman.finance.manager.repository.ExpenseRepository;
 import dev.vivekraman.finance.manager.repository.ExpenseTagRepository;
 import dev.vivekraman.finance.manager.service.api.ExpenseTagService;
