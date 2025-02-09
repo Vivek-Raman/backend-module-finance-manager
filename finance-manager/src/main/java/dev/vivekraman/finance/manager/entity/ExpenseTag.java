@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExpenseTag {
-  @Id private String tag;
+  @Id private String id;
 
   private String apiKey;
 
@@ -21,4 +21,5 @@ public class ExpenseTag {
    *  See {@link Expense}
    */
   private String expenseId;
+  private String tag;
 }

@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public Mono<User> fetchUser(String apiKey) {
-    return userRepository.findById(apiKey);
+    return userRepository.findByApiKey(apiKey);
   }
 
   @Override

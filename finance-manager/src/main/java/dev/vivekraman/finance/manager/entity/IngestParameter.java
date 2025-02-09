@@ -9,12 +9,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Table(name = "finance_ingest_log")
+@Table(name = "finance_ingest_parameter")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class IngestLog {
+public class IngestParameter {
   @Id private String id;
 
   private String apiKey;

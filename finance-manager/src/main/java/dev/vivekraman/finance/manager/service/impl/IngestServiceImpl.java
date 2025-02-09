@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 
 import dev.vivekraman.finance.manager.config.Constants;
 import dev.vivekraman.finance.manager.entity.Expense;
-import dev.vivekraman.finance.manager.entity.IngestLog;
+import dev.vivekraman.finance.manager.entity.IngestParameter;
 import dev.vivekraman.finance.manager.entity.User;
 import dev.vivekraman.finance.manager.model.IngestMetadata;
 import dev.vivekraman.finance.manager.repository.ExpenseRepository;
-import dev.vivekraman.finance.manager.repository.IngestLogRepository;
+import dev.vivekraman.finance.manager.repository.IngestParameterRepository;
 import dev.vivekraman.finance.manager.service.api.IngestService;
 import dev.vivekraman.finance.manager.service.api.UserService;
 import dev.vivekraman.monolith.security.util.AuthUtils;
@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
 public class IngestServiceImpl implements IngestService {
   private final UserService userService;
   private final ExpenseRepository expenseRepository;
-  private final IngestLogRepository ingestLogRepository;
+  private final IngestParameterRepository ingestParameterRepository;
 
   @Override
   public Mono<Boolean> ingestSplitwise(List<Map<String, String>> entries) {
@@ -50,13 +50,13 @@ public class IngestServiceImpl implements IngestService {
       .map(e -> true);
   }
 
-  private Mono<Map<String, IngestLog>> fetchIngestParams(String apiKey) {
-    return ingestLogRepository.findByApiKeyAndIdIn(apiKey,
+  private Mono<Map<String, IngestParameter>> fetchIngestParams(String apiKey) {
+    return ingestParameterRepository.findByApiKeyAndKeyIn(apiKey,
       Constants.INGEST_LAST_SEEN_BALANCE,
       Constants.INGEST_LAST_PROCESSED_DATE)
       .collectList()
       .map(ingestLogs -> ingestLogs.stream()
-        .collect(Collectors.toMap(IngestLog::getKey, Function.identity())));
+        .collect(Collectors.toMap(IngestParameter::getKey, Function.identity())));
   }
 
   private Mono<IngestMetadata> filterEntries(IngestMetadata ingestMetadata, List<Map<String, String>> entries) {
