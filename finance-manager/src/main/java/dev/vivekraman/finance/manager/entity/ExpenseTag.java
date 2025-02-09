@@ -1,19 +1,23 @@
 package dev.vivekraman.finance.manager.entity;
 
+import java.util.UUID;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import dev.vivekraman.finance.manager.model.enums.ExpenseTags;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Table(name = "finance_expense_tag")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExpenseTag {
-  @Id private String id;
-
+  @Id private UUID id;
   private String apiKey;
 
   /**

@@ -1,6 +1,7 @@
 package dev.vivekraman.finance.manager.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
@@ -19,9 +20,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IngestParameter {
-  @Id private String id;
+  @Id private UUID id;
 
   private String apiKey;
-  private Float lastSeenBalance;
+  private Double lastSeenBalance;
   private LocalDateTime lastProcessedDate;
 }

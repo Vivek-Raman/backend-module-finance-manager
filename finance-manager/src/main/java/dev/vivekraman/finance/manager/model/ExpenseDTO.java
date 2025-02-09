@@ -16,6 +16,6 @@ import lombok.NoArgsConstructor;
 public class ExpenseDTO {
   private String id;
   private String summary;
-  private Float amount;
+  private Double amount;
   private LocalDateTime date;
 }

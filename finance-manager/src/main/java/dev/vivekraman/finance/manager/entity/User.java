@@ -1,5 +1,7 @@
 package dev.vivekraman.finance.manager.entity;
 
+import java.util.UUID;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
-  @Id private String id;
+  @Id private UUID id;
   private String apiKey;
   private String fullName;
 }

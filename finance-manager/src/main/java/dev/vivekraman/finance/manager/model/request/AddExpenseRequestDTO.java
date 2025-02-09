@@ -1,28 +1,22 @@
-package dev.vivekraman.finance.manager.entity;
+package dev.vivekraman.finance.manager.model.request;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Table(name = "finance_expense")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Expense {
-  @Id private UUID id;
-  private String apiKey;
+public class AddExpenseRequestDTO {
+  private String id;
   private String summary;
   private Double amount;
   private LocalDateTime date;
+  private Set<String> tags;
 }

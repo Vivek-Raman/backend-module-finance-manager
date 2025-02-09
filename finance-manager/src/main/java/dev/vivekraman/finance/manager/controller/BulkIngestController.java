@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClientResponseException.Unauthorized;
 
 import dev.vivekraman.finance.manager.config.Constants;
+import dev.vivekraman.finance.manager.model.IngestSplitwiseResponseDTO;
 import dev.vivekraman.finance.manager.service.api.IngestService;
 import dev.vivekraman.finance.manager.service.api.ParserService;
 import dev.vivekraman.monolith.annotation.MonolithController;
@@ -31,7 +32,7 @@ public class BulkIngestController {
 
   @PreAuthorize(Constants.PRE_AUTHORIZATION_SPEC)
   @PostMapping(path = "/bulk/splitwise", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public Mono<Response<Boolean>> ingestSplitwiseExport(@RequestPart FilePart file) {
+  public Mono<Response<IngestSplitwiseResponseDTO>> ingestSplitwiseExport(@RequestPart FilePart file) {
     return parserService.parseCSV(file)
       .flatMap(ingestService::ingestSplitwise)
       .map(Response::of).subscribeOn(scheduler);
