@@ -81,7 +81,6 @@ public class IngestServiceImpl implements IngestService {
       }
     }
 
-
     if (balance != lastSeenBalance) {
       log.warn("Balance mismatch!");
       return reconcileUpdatedEntries(ingestMetadata, oldEntries);

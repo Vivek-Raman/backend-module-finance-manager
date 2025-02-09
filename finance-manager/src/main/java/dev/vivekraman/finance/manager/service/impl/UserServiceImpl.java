@@ -3,6 +3,7 @@ package dev.vivekraman.finance.manager.service.impl;
 import org.springframework.stereotype.Service;
 
 import dev.vivekraman.finance.manager.entity.User;
+import dev.vivekraman.finance.manager.model.request.RegisterUserRequestDTO;
 import dev.vivekraman.finance.manager.repository.UserRepository;
 import dev.vivekraman.finance.manager.service.api.UserService;
 import dev.vivekraman.monolith.security.util.AuthUtils;
@@ -25,5 +26,15 @@ public class UserServiceImpl implements UserService {
   @Override
   public Mono<User> fetchUser(String apiKey) {
     return userRepository.findById(apiKey);
+  }
+
+  @Override
+  public Mono<User> addUser(RegisterUserRequestDTO user) {
+    return AuthUtils.fetchApiKey()
+      .map(apiKey -> User.builder()
+        .apiKey(apiKey)
+        .fullName(user.getFullName())
+        .build())
+      .flatMap(userRepository::save);
   }
 }
