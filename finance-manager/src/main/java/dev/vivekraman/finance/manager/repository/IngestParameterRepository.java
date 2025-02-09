@@ -4,9 +4,9 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 
 import dev.vivekraman.finance.manager.entity.IngestParameter;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 public interface IngestParameterRepository extends ReactiveCrudRepository<IngestParameter, String> {
-  Flux<IngestParameter> findByApiKeyAndKeyIn(String apiKey, String... keys);
+  Mono<IngestParameter> findByApiKey(String apiKey);
 }

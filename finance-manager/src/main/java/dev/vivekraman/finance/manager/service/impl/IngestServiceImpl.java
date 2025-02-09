@@ -1,12 +1,18 @@
 package dev.vivekraman.finance.manager.service.impl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import dev.vivekraman.finance.manager.config.Constants;
@@ -43,33 +49,40 @@ public class IngestServiceImpl implements IngestService {
     return AuthUtils.fetchApiKey()
       .flatMap(apiKey -> Mono.zip(
         userService.fetchUser(apiKey),
-        fetchIngestParams(apiKey),
+        ingestParameterRepository.findByApiKey(apiKey)
+          .defaultIfEmpty(new IngestParameter()),
         IngestMetadata::create))
+      .flatMap(this::handleNullParameters)
       .flatMap(ingestMetadata -> filterEntries(ingestMetadata, entries))
       .flatMap(this::persistNewEntries)
       .map(e -> true);
   }
 
-  private Mono<Map<String, IngestParameter>> fetchIngestParams(String apiKey) {
-    return ingestParameterRepository.findByApiKeyAndKeyIn(apiKey,
-      Constants.INGEST_LAST_SEEN_BALANCE,
-      Constants.INGEST_LAST_PROCESSED_DATE)
-      .collectList()
-      .map(ingestLogs -> ingestLogs.stream()
-        .collect(Collectors.toMap(IngestParameter::getKey, Function.identity())));
+  private Mono<IngestMetadata> handleNullParameters(IngestMetadata ingestMetadata) {
+    if (StringUtils.isBlank(ingestMetadata.getParameters().getApiKey())) {
+      return ingestParameterRepository.save(
+        IngestParameter.builder()
+          .apiKey(ingestMetadata.getUser().getApiKey())
+          .lastSeenBalance(0f)
+          .lastProcessedDate(LocalDateTime.now())
+          .build())
+        .map(params -> {
+          ingestMetadata.setParameters(params);
+          return ingestMetadata;
+        });
+    } else {
+      return Mono.just(ingestMetadata);
+    }
   }
 
   private Mono<IngestMetadata> filterEntries(IngestMetadata ingestMetadata, List<Map<String, String>> entries) {
-    float lastSeenBalance = Float.parseFloat(
-      ingestMetadata.getIngestParams().get(Constants.INGEST_LAST_SEEN_BALANCE).getValue());
-    LocalDate lastProcessedDate = LocalDate.parse(
-      ingestMetadata.getIngestParams().get(Constants.INGEST_LAST_PROCESSED_DATE).getValue());
     String username = ingestMetadata.getUser().getFullName();
-    // TODO: handle empty params
+    LocalDate lastProcessedDate = ingestMetadata.getParameters()
+      .getLastProcessedDate().toLocalDate();
 
     List<Map<String, String>> oldEntries = new LinkedList<>();
     List<Map<String, String>> newEntries = new LinkedList<>();
-    double balance = 0d;
+    float balance = 0f;
     for (int i = 0; i < entries.size(); ++i) {
       Map<String, String> row = entries.get(i);
       LocalDate date = LocalDate.parse(row.get("Date"));
@@ -81,7 +94,7 @@ public class IngestServiceImpl implements IngestService {
       }
     }
 
-    if (balance != lastSeenBalance) {
+    if (balance != ingestMetadata.getParameters().getLastSeenBalance()) {
       log.warn("Balance mismatch!");
       return reconcileUpdatedEntries(ingestMetadata, oldEntries);
     }

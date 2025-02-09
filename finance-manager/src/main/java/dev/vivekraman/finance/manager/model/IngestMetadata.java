@@ -14,15 +14,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class IngestMetadata {
   private User user;
-  private Map<String, IngestParameter> ingestParams;
+  private IngestParameter parameters;
   private List<Map<String, String>> newEntries;
   private List<Map<String, String>> oldUpdatedEntries;
   private IngestSplitwiseResponseDTO response;
 
-  public static IngestMetadata create(User user, Map<String, IngestParameter> ingestParams) {
+  public static IngestMetadata create(User user, IngestParameter ingestParameters) {
     IngestMetadata metadata = new IngestMetadata();
     metadata.setUser(user);
-    metadata.setIngestParams(ingestParams);
+    metadata.setParameters(ingestParameters);
     metadata.setResponse(new IngestSplitwiseResponseDTO());
     return metadata;
   }
