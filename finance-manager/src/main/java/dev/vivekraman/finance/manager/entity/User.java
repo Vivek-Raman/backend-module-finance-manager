@@ -22,4 +22,5 @@ public class User {
   @Id private UUID id;
   private String apiKey;
   private String fullName;
+  private String primaryCurrency;
 }

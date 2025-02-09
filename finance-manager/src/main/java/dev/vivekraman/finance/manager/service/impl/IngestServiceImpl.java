@@ -143,7 +143,7 @@ public class IngestServiceImpl implements IngestService {
 
   private Expense tryCreateExpense(Map<String, String> row, User user) {
     if ("Payment".equals(row.get("Category")) ||
-        !"USD".equals(row.get("Currency"))) {
+        !user.getPrimaryCurrency().equals(row.get("Currency"))) {
       return null;
     }
 

@@ -34,6 +34,7 @@ public class UserServiceImpl implements UserService {
       .map(apiKey -> User.builder()
         .apiKey(apiKey)
         .fullName(user.getFullName())
+        .primaryCurrency(user.getPrimaryCurrency())
         .build())
       .flatMap(userRepository::save);
   }

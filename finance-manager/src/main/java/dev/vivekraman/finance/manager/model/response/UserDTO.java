@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDTO {
   private String fullName;
+  private String primaryCurrency;
 }
