@@ -7,5 +7,8 @@ import dev.vivekraman.finance.manager.model.IngestSplitwiseResponseDTO;
 import reactor.core.publisher.Mono;
 
 public interface IngestService {
-  Mono<IngestSplitwiseResponseDTO> ingestSplitwise(List<Map<String, String>> entries);
+  String parseGroupName(String filename);
+
+  Mono<IngestSplitwiseResponseDTO> ingestSplitwise(
+    String groupName, List<Map<String, String>> entries);
 }

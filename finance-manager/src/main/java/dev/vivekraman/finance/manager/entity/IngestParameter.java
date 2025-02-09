@@ -23,6 +23,7 @@ public class IngestParameter {
   @Id private UUID id;
 
   private String apiKey;
+  private String groupName;
   private Double lastSeenBalance;
   private LocalDateTime lastProcessedDate;
 }

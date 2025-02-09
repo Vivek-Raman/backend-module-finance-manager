@@ -8,5 +8,5 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface IngestParameterRepository extends ReactiveCrudRepository<IngestParameter, String> {
-  Mono<IngestParameter> findByApiKey(String apiKey);
+  Mono<IngestParameter> findByApiKeyAndGroupName(String apiKey, String groupName);
 }

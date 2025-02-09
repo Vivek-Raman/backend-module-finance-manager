@@ -34,7 +34,8 @@ public class BulkIngestController {
   @PostMapping(path = "/bulk/splitwise", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public Mono<Response<IngestSplitwiseResponseDTO>> ingestSplitwiseExport(@RequestPart FilePart file) {
     return parserService.parseCSV(file)
-      .flatMap(ingestService::ingestSplitwise)
+      .flatMap(records -> ingestService.ingestSplitwise(
+        ingestService.parseGroupName(file.filename()), records))
       .map(Response::of).subscribeOn(scheduler);
   }
 }

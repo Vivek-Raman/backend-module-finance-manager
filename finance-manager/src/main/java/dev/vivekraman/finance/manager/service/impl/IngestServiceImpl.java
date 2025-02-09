@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -49,21 +50,26 @@ public class IngestServiceImpl implements IngestService {
   private final ExpenseRepository expenseRepository;
   private final IngestParameterRepository ingestParameterRepository;
 
+  private static final Pattern FILENAME_PATTERN = Pattern.compile("(.*)_[\\d-]{10}_export.csv");
+
   @Override
-  public Mono<IngestSplitwiseResponseDTO> ingestSplitwise(List<Map<String, String>> entries) {
+  public String parseGroupName(String filename) {
+    return FILENAME_PATTERN.matcher(filename).group(1);
+  }
+
+  @Override
+  public Mono<IngestSplitwiseResponseDTO> ingestSplitwise(
+    String groupName, List<Map<String, String>> entries) {
     // omit last entry (total balances; not an expense)
     entries.removeLast();
-
-    // TODO: push new records into finance_expense and notify
-    // TODO: update ingest params
 
     return AuthUtils.fetchApiKey()
       .flatMap(apiKey -> Mono.zip(
         userService.fetchUser(apiKey),
-        ingestParameterRepository.findByApiKey(apiKey)
+        ingestParameterRepository.findByApiKeyAndGroupName(apiKey, groupName)
           .defaultIfEmpty(new IngestParameter()),
         IngestMetadata::create))
-      .flatMap(this::handleNullParameters)
+      .flatMap(metadata -> handleNullParameters(metadata, groupName))
       .flatMap(ingestMetadata -> filterEntries(ingestMetadata, entries))
       .flatMap(this::persistNewEntries)
       .flatMap(this::updateParameters)
@@ -71,11 +77,12 @@ public class IngestServiceImpl implements IngestService {
       .defaultIfEmpty(new IngestSplitwiseResponseDTO());
   }
 
-  private Mono<IngestMetadata> handleNullParameters(IngestMetadata ingestMetadata) {
+  private Mono<IngestMetadata> handleNullParameters(IngestMetadata ingestMetadata, String groupName) {
     if (StringUtils.isBlank(ingestMetadata.getParameters().getApiKey())) {
       return ingestParameterRepository.save(
         IngestParameter.builder()
           .apiKey(ingestMetadata.getUser().getApiKey())
+          .groupName(groupName)
           .lastSeenBalance(0d)
           .lastProcessedDate(LocalDateTime.parse("1970-01-01T00:00:00"))
           .build())
@@ -120,7 +127,7 @@ public class IngestServiceImpl implements IngestService {
 
     if (BigDecimal.valueOf(ingestMetadata.getParameters().getLastSeenBalance()).setScale(2, RoundingMode.DOWN)
         .compareTo(BigDecimal.valueOf(oldBalance).setScale(2, RoundingMode.DOWN)) != 0) {
-      log.warn("Balance mismatch!");
+      log.warn("Balance mismatch!"); // TODO: handle?
       // return reconcileService.performReconcile(ingestMetadata, oldEntries);
     }
 
@@ -133,7 +140,9 @@ public class IngestServiceImpl implements IngestService {
       .filter(Objects::nonNull)
       .toList();
     return expenseRepository.saveAll(toPersist).collectList()
-      .flatMap(expenses -> expenseTagService.tag(expenses, Set.of(ExpenseTags.SPLITWISE.name()))
+      .flatMap(expenses -> expenseTagService.tag(expenses, Set.of(
+          ExpenseTags.SPLITWISE.name(),
+          ingestMetadata.getParameters().getGroupName()))
         .map(tags -> expenses))
       .map(addedRecords -> {
         ingestMetadata.getResponse().setRecordsAdded(addedRecords.size());

@@ -21,7 +21,10 @@ public class ReconcileServiceImpl implements ReconcileService {
   private final ExpenseTagService expenseTagService;
 
   @Override
-  public Mono<IngestMetadata> performReconcile(IngestMetadata metadata, List<Map<String, String>> oldRecords) {
+  public Mono<IngestMetadata> performReconcile(
+    IngestMetadata metadata, List<Map<String, String>> oldRecords) {
+
+      // TODO: delete all records by apiKey and groupName.
 
     // TODO: push updates on old records into finance_expense and notify
     // TODO: push backdated new records into finance_expense and notify
