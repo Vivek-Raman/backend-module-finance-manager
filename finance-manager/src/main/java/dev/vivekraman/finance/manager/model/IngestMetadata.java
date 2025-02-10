@@ -18,7 +18,6 @@ public class IngestMetadata {
   private IngestParameter parameters;
   private LocalDate newestDateInEntries;
   private List<Map<String, String>> newEntries;
-  private List<Map<String, String>> oldUpdatedEntries;
   private Double newBalance;
   private IngestSplitwiseResponseDTO response;
 

@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IngestSplitwiseResponseDTO {
-  private int recordsAdded;
-  private int recordsUpdated;
+  private long recordsAdded;
+  private long recordsDeleted;
 }

@@ -8,6 +8,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ExpenseTagService {
-  Flux<Expense> findExpensesByTag(String apiKey, String tag);
+  Flux<Expense> findExpensesByTagIn(String apiKey, Set<String> tags);
+  Mono<Long> deleteExpensesByTagIn(String apiKey, Set<String> tags);
   Mono<Boolean> tag(List<Expense> expenses, Set<String> tags);
 }

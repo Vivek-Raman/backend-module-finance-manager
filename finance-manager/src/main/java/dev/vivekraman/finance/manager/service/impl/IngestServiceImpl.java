@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -41,19 +42,19 @@ public class IngestServiceImpl implements IngestService {
   private final ExpenseRepository expenseRepository;
   private final IngestParameterRepository ingestParameterRepository;
 
-  private static final Pattern FILENAME_PATTERN = Pattern.compile("(.*)_[\\d-]{10}_export.csv");
+  private static final Pattern FILENAME_PATTERN = Pattern.compile(
+    "(.*)_[\\d-]{10}_export.*\\.csv", Pattern.CASE_INSENSITIVE);
 
   @Override
   public String parseGroupName(String filename) {
-    return FILENAME_PATTERN.matcher(filename).group(1);
+    Matcher matcher = FILENAME_PATTERN.matcher(filename);
+    matcher.find();
+    return matcher.group(1);
   }
 
   @Override
   public Mono<IngestSplitwiseResponseDTO> ingestSplitwise(
     String groupName, List<Map<String, String>> entries) {
-    // omit last entry (total balances; not an expense)
-    entries.removeLast();
-
     return AuthUtils.fetchApiKey()
       .flatMap(apiKey -> Mono.zip(
         userService.fetchUser(apiKey),
@@ -98,6 +99,11 @@ public class IngestServiceImpl implements IngestService {
     ingestMetadata.setNewestDateInEntries(LocalDate.parse(entries.get(0).get("Date")));
     for (int i = 0; i < entries.size(); ++i) {
       Map<String, String> row = entries.get(i);
+      // omit total balance entries
+      if ("Total balance".equals(row.get("Description"))) {
+        continue;
+      }
+
       LocalDate date = LocalDate.parse(row.get("Date"));
       double amount = Double.parseDouble(row.get(username));
       if (!date.isAfter(lastProcessedDate)) {
@@ -118,8 +124,8 @@ public class IngestServiceImpl implements IngestService {
 
     if (BigDecimal.valueOf(ingestMetadata.getParameters().getLastSeenBalance()).setScale(2, RoundingMode.DOWN)
         .compareTo(BigDecimal.valueOf(oldBalance).setScale(2, RoundingMode.DOWN)) != 0) {
-      log.warn("Balance mismatch!"); // TODO: handle?
-      // return reconcileService.performReconcile(ingestMetadata, oldEntries);
+      log.warn("Balance mismatch!");
+      return reconcileService.performReconcile(ingestMetadata, oldEntries);
     }
 
     return Mono.just(ingestMetadata);
