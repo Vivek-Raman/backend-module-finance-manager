@@ -2,6 +2,9 @@ package dev.vivekraman.finance.manager.controller;
 
 import java.util.List;
 
+import dev.vivekraman.monolith.security.util.AuthUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,8 +46,10 @@ public class ExpenseController {
 
   @PreAuthorize(Constants.PRE_AUTHORIZATION_SPEC)
   @GetMapping("/expenses")
-  public Mono<ResponseList<ExpenseDTO>> fetchExpenses() {
-    return expenseRepository.findAll()
+  public Mono<ResponseList<ExpenseDTO>> fetchExpenses(int page, int size) {
+    PageRequest pageRequest = PageRequest.of(page, size);
+    return AuthUtils.fetchApiKey()
+      .flatMapMany(apiKey -> expenseRepository.findByApiKeyOrderByDateDesc(apiKey, pageRequest))
       .map(e -> objectMapper.convertValue(e, ExpenseDTO.class))
       .collectList().map(list -> {
         ResponseList<ExpenseDTO> response = ResponseList.of(list);
