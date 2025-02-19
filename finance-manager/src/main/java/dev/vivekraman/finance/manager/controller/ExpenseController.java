@@ -4,7 +4,6 @@ import java.util.List;
 
 import dev.vivekraman.monolith.security.util.AuthUtils;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.vivekraman.finance.manager.config.Constants;
 import dev.vivekraman.finance.manager.entity.Expense;
-import dev.vivekraman.finance.manager.model.ExpenseDTO;
+import dev.vivekraman.finance.manager.model.response.ExpenseDTO;
 import dev.vivekraman.finance.manager.model.request.AddExpenseRequestDTO;
 import dev.vivekraman.finance.manager.repository.ExpenseRepository;
 import dev.vivekraman.finance.manager.service.api.ExpenseTagService;
@@ -36,11 +35,12 @@ public class ExpenseController {
   @PreAuthorize(Constants.PRE_AUTHORIZATION_SPEC)
   @PostMapping("/expenses")
   public Mono<Response<ExpenseDTO>> addExpense(@RequestBody AddExpenseRequestDTO expenseDTO) {
-    Expense toAdd = objectMapper.convertValue(expenseDTO, Expense.class);
-    return expenseRepository.save(toAdd)
-      .flatMap(expense -> expenseTagService.tag(List.of(expense), expenseDTO.getTags())
-        .map(e -> expense))
-      .map(e -> Response.of(objectMapper.convertValue(e, ExpenseDTO.class)))
+    return AuthUtils.fetchApiKey().flatMap(apiKey -> {
+      Expense toAdd = objectMapper.convertValue(expenseDTO, Expense.class);
+      toAdd.setApiKey(apiKey);
+      return expenseRepository.save(toAdd);
+    }).flatMap(expense -> expenseTagService.tag(List.of(expense), expenseDTO.getTags()).next())
+      .map(Response::of)
       .subscribeOn(scheduler);
   }
 
@@ -49,9 +49,9 @@ public class ExpenseController {
   public Mono<ResponseList<ExpenseDTO>> fetchExpenses(int page, int size) {
     PageRequest pageRequest = PageRequest.of(page, size);
     return AuthUtils.fetchApiKey()
-      .flatMapMany(apiKey -> expenseRepository.findByApiKeyOrderByDateDesc(apiKey, pageRequest))
-      .map(e -> objectMapper.convertValue(e, ExpenseDTO.class))
-      .collectList().map(list -> {
+      .flatMap(apiKey -> expenseRepository.findByApiKeyOrderByDateDesc(apiKey, pageRequest).collectList())
+      .flatMap(expenses -> expenseTagService.findTagsForExpenses(expenses.get(0).getApiKey(), expenses).collectList())
+      .map(list -> {
         ResponseList<ExpenseDTO> response = ResponseList.of(list);
         response.setData(list);
         return response;

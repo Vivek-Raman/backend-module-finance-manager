@@ -139,7 +139,7 @@ public class IngestServiceImpl implements IngestService {
     return expenseRepository.saveAll(toPersist).collectList()
       .flatMap(expenses -> expenseTagService.tag(expenses, Set.of(
           ExpenseTags.SPLITWISE.name(),
-          ingestMetadata.getParameters().getGroupName()))
+          ingestMetadata.getParameters().getGroupName())).collectList()
         .map(tags -> expenses))
       .map(addedRecords -> {
         ingestMetadata.getResponse().setRecordsAdded(addedRecords.size());

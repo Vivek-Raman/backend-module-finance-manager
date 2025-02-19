@@ -1,6 +1,7 @@
 package dev.vivekraman.finance.manager.repository;
 
 import java.util.Date;
+import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
@@ -12,9 +13,10 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface ExpenseRepository extends ReactiveCrudRepository<Expense, String> {
-  Flux<Expense> findByDateBetween(Date left, Date right);
+  Flux<Expense> findByApiKeyAndDateBetween(String apiKey, Date left, Date right);
 
   Flux<Expense> findByApiKeyOrderByDateDesc(String apiKey, Pageable pageRequest);
+  Flux<Expense> findByApiKeyAndIdIn(String apiKey, Set<String> ids);
 
   Mono<Long> countByApiKeyOrderByDateDesc(String apiKey);
 }

@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AddExpenseRequestDTO {
-  private String id;
   private String summary;
   private Double amount;
   private LocalDateTime date;
