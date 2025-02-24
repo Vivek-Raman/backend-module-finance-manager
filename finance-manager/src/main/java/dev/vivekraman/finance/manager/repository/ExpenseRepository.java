@@ -14,9 +14,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface ExpenseRepository extends ReactiveCrudRepository<Expense, String> {
   Flux<Expense> findByApiKeyAndDateBetween(String apiKey, Date left, Date right);
-
   Flux<Expense> findByApiKeyOrderByDateDesc(String apiKey, Pageable pageRequest);
+  Mono<Long> countByApiKey(String apiKey);
   Flux<Expense> findByApiKeyAndIdIn(String apiKey, Set<String> ids);
-
-  Mono<Long> countByApiKeyOrderByDateDesc(String apiKey);
 }

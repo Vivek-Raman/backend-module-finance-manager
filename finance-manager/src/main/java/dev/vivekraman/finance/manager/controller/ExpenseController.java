@@ -49,11 +49,14 @@ public class ExpenseController {
   public Mono<ResponseList<ExpenseDTO>> fetchExpenses(int page, int size) {
     PageRequest pageRequest = PageRequest.of(page, size);
     return AuthUtils.fetchApiKey()
-      .flatMap(apiKey -> expenseRepository.findByApiKeyOrderByDateDesc(apiKey, pageRequest).collectList())
-      .flatMap(expenses -> expenseTagService.findTagsForExpenses(expenses.get(0).getApiKey(), expenses).collectList())
-      .map(list -> {
-        ResponseList<ExpenseDTO> response = ResponseList.of(list);
-        response.setData(list);
+      .flatMap(apiKey -> expenseRepository.findByApiKeyOrderByDateDesc(apiKey, pageRequest).collectList()
+        .flatMap(expenses -> expenseTagService.findTagsForExpenses(apiKey, expenses).collectList())
+        .zipWith(expenseRepository.countByApiKey(apiKey)))
+      .map(data -> {
+        ResponseList<ExpenseDTO> response = ResponseList.of(data.getT1());
+        response.setPage(page);
+        response.setData(data.getT1());
+        response.setTotal(data.getT2());
         return response;
       }).subscribeOn(scheduler);
   }
