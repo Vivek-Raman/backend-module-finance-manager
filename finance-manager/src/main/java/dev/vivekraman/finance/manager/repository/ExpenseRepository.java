@@ -17,4 +17,5 @@ public interface ExpenseRepository extends ReactiveCrudRepository<Expense, Strin
   Flux<Expense> findByApiKeyOrderByDateDesc(String apiKey, Pageable pageRequest);
   Mono<Long> countByApiKey(String apiKey);
   Flux<Expense> findByApiKeyAndIdIn(String apiKey, Set<String> ids);
+  Mono<Void> deleteByApiKeyAndId(String apiKey, String expenseId);
 }

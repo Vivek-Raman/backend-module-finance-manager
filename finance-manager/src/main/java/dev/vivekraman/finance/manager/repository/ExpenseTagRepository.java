@@ -1,6 +1,7 @@
 package dev.vivekraman.finance.manager.repository;
 
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
@@ -14,4 +15,6 @@ public interface ExpenseTagRepository extends ReactiveCrudRepository<ExpenseTag,
   Flux<ExpenseTag> findByApiKeyAndExpenseIdIn(String apiKey, Set<String> expenseIds);
   Flux<ExpenseTag> findByApiKeyAndTagIn(String apiKey, Set<String> tag);
   Mono<Void> deleteByApiKeyAndTagIn(String apiKey, Set<String> tag);
+
+  Mono<Void> deleteByApiKeyAndId(String apiKey, UUID expenseId);
 }

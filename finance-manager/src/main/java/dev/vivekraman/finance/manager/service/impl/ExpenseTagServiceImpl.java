@@ -1,10 +1,6 @@
 package dev.vivekraman.finance.manager.service.impl;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -75,5 +71,13 @@ public class ExpenseTagServiceImpl implements ExpenseTagService {
         .tags(expenseIdToTagsMap.get(expense.getId().toString())
           .stream().map(ExpenseTag::getTag).toList())
         .build()));
+  }
+
+  @Override
+  public Mono<Boolean> deleteExpense(String apiKey, String expenseId) {
+    return expenseTagRepository.deleteByApiKeyAndId(apiKey, UUID.fromString(expenseId))
+      .map(e -> true).defaultIfEmpty(true)
+      .zipWith(expenseRepository.deleteByApiKeyAndId(apiKey, expenseId))
+      .map(res -> true).defaultIfEmpty(true);
   }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import dev.vivekraman.monolith.security.util.AuthUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,5 +60,13 @@ public class ExpenseController {
         response.setTotal(data.getT2());
         return response;
       }).subscribeOn(scheduler);
+  }
+
+  @PreAuthorize(Constants.PRE_AUTHORIZATION_SPEC)
+  @DeleteMapping
+  public Mono<Boolean> deleteExpense(String expenseId) {
+    return AuthUtils.fetchApiKey()
+      .flatMap(apiKey -> expenseTagService.deleteExpense(apiKey, expenseId))
+      .map(Response::of).subscribeOn(scheduler);
   }
 }

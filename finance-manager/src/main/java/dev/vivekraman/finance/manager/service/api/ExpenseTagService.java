@@ -14,4 +14,6 @@ public interface ExpenseTagService {
   Flux<ExpenseDTO> findExpensesByTagIn(String apiKey, Set<String> tags);
   Mono<Long> deleteExpensesByTagIn(String apiKey, Set<String> tags);
   Flux<ExpenseDTO> tag(List<Expense> expenses, Set<String> tags);
+
+    Mono<Boolean> deleteExpense(String apiKey, String expenseId);
 }
