@@ -64,7 +64,7 @@ public class ExpenseController {
 
   @PreAuthorize(Constants.PRE_AUTHORIZATION_SPEC)
   @DeleteMapping
-  public Mono<Boolean> deleteExpense(String expenseId) {
+  public Mono<Response<Boolean>> deleteExpense(String expenseId) {
     return AuthUtils.fetchApiKey()
       .flatMap(apiKey -> expenseTagService.deleteExpense(apiKey, expenseId))
       .map(Response::of).subscribeOn(scheduler);
