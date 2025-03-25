@@ -23,6 +23,6 @@ public class ExpenseTag {
    *  foreign key on table {@code finance_expense}.
    *  See {@link Expense}
    */
-  private String expenseId;
+  private UUID expenseId;
   private String tag;
 }

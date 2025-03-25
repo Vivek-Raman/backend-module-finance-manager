@@ -1,6 +1,6 @@
 package dev.vivekraman.finance.manager.entity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -25,5 +25,5 @@ public class IngestParameter {
   private String apiKey;
   private String groupName;
   private Double lastSeenBalance;
-  private LocalDateTime lastProcessedDate;
+  private OffsetDateTime lastProcessedDate;
 }

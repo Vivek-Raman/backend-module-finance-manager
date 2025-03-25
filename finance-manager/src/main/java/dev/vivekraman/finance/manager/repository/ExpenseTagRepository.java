@@ -11,7 +11,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface ExpenseTagRepository extends ReactiveCrudRepository<ExpenseTag, String> {
+public interface ExpenseTagRepository extends ReactiveCrudRepository<ExpenseTag, UUID> {
   Flux<ExpenseTag> findByApiKeyAndExpenseIdIn(String apiKey, Set<String> expenseIds);
   Flux<ExpenseTag> findByApiKeyAndTagIn(String apiKey, Set<String> tag);
   Mono<Void> deleteByApiKeyAndTagIn(String apiKey, Set<String> tag);

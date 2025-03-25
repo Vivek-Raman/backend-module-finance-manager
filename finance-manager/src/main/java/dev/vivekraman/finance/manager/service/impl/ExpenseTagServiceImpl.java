@@ -55,20 +55,20 @@ public class ExpenseTagServiceImpl implements ExpenseTagService {
     expenses.forEach(expense ->
       tags.forEach(tag -> toAdd.add(ExpenseTag.builder()
         .apiKey(expense.getApiKey())
-        .expenseId(expense.getId().toString())
+        .expenseId(expense.getId())
         .tag(tag).build())));
     return expenseTagRepository.saveAll(toAdd).collectMultimap(ExpenseTag::getExpenseId)
       .flatMapMany(expenseIdToTagsMap -> buildExpenseDTOs(expenseIdToTagsMap, expenses));
   }
 
-  private Flux<ExpenseDTO> buildExpenseDTOs(Map<String, Collection<ExpenseTag>> expenseIdToTagsMap, Collection<Expense> expenses) {
+  private Flux<ExpenseDTO> buildExpenseDTOs(Map<UUID, Collection<ExpenseTag>> expenseIdToTagsMap, Collection<Expense> expenses) {
     return Flux.fromStream(expenses.stream()
       .map(expense -> ExpenseDTO.builder()
         .id(expense.getId().toString())
         .summary(expense.getSummary())
         .amount(expense.getAmount())
         .date(expense.getDate())
-        .tags(expenseIdToTagsMap.get(expense.getId().toString())
+        .tags(expenseIdToTagsMap.get(expense.getId())
           .stream().map(ExpenseTag::getTag).toList())
         .build()));
   }

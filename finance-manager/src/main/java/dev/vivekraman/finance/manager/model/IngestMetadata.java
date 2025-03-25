@@ -1,6 +1,6 @@
 package dev.vivekraman.finance.manager.model;
 
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class IngestMetadata {
   private User user;
   private IngestParameter parameters;
-  private LocalDate newestDateInEntries;
+  private OffsetDateTime newestDateInEntries;
   private List<Map<String, String>> newEntries;
   private Double newBalance;
   private IngestSplitwiseResponseDTO response;

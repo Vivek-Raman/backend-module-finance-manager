@@ -1,6 +1,6 @@
 package dev.vivekraman.finance.manager.model.request;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,6 +16,6 @@ import lombok.NoArgsConstructor;
 public class AddExpenseRequestDTO {
   private String summary;
   private Double amount;
-  private LocalDateTime date;
+  private OffsetDateTime date;
   private Set<String> tags;
 }

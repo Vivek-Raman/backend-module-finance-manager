@@ -1,6 +1,6 @@
 package dev.vivekraman.finance.manager.entity;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -24,5 +24,5 @@ public class Expense {
   private String apiKey;
   private String summary;
   private Double amount;
-  private LocalDateTime date;
+  private OffsetDateTime date;
 }

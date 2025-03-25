@@ -1,6 +1,6 @@
 package dev.vivekraman.finance.manager.model.response;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class ExpenseDTO {
   private String id;
   private String summary;
   private Double amount;
-  private LocalDateTime date;
+  private OffsetDateTime date;
   @Builder.Default
   private List<String> tags = new ArrayList<>();
 }

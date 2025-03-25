@@ -2,8 +2,13 @@ package dev.vivekraman.finance.manager.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +81,7 @@ public class IngestServiceImpl implements IngestService {
           .apiKey(ingestMetadata.getUser().getApiKey())
           .groupName(groupName)
           .lastSeenBalance(0d)
-          .lastProcessedDate(LocalDateTime.parse("1970-01-01T00:00:00"))
+          .lastProcessedDate(OffsetDateTime.MIN)
           .build())
         .map(params -> {
           ingestMetadata.setParameters(params);
@@ -89,14 +94,16 @@ public class IngestServiceImpl implements IngestService {
 
   private Mono<IngestMetadata> filterEntries(IngestMetadata ingestMetadata, List<Map<String, String>> entries) {
     String username = ingestMetadata.getUser().getFullName();
-    LocalDate lastProcessedDate = ingestMetadata.getParameters()
-      .getLastProcessedDate().toLocalDate();
+    OffsetDateTime lastProcessedDate = ingestMetadata.getParameters().getLastProcessedDate();
 
     List<Map<String, String>> oldEntries = new LinkedList<>();
     List<Map<String, String>> newEntries = new LinkedList<>();
     double oldBalance = 0f;
     double newBalance = 0f;
-    ingestMetadata.setNewestDateInEntries(LocalDate.parse(entries.get(0).get("Date")));
+    ingestMetadata.setNewestDateInEntries(
+      LocalDate.parse(entries.get(0).get("Date"),DateTimeFormatter.ISO_LOCAL_DATE)
+        .atStartOfDay()
+        .atOffset(ZoneOffset.UTC));
     for (int i = 0; i < entries.size(); ++i) {
       Map<String, String> row = entries.get(i);
       // omit total balance entries
@@ -104,15 +111,18 @@ public class IngestServiceImpl implements IngestService {
         continue;
       }
 
-      LocalDate date = LocalDate.parse(row.get("Date"));
+      OffsetDateTime date =
+        LocalDate.parse(row.get("Date"), DateTimeFormatter.ISO_LOCAL_DATE)
+          .atStartOfDay()
+          .atOffset(ZoneOffset.UTC);
       double amount = Double.parseDouble(row.get(username));
-      if (!date.isAfter(lastProcessedDate)) {
+      if (!date.toInstant().isAfter(lastProcessedDate.toInstant())) {
         oldEntries.add(row);
         oldBalance += amount;
-      } else if (date.isBefore(LocalDate.now())) {
+      } else if (date.toInstant().isBefore(Instant.now())) {
         newBalance += amount;
         newEntries.add(row);
-        if (date.isAfter(ingestMetadata.getNewestDateInEntries())) {
+        if (date.toInstant().isAfter(ingestMetadata.getNewestDateInEntries().toInstant())) {
           ingestMetadata.setNewestDateInEntries(date);
         }
       }
@@ -174,7 +184,9 @@ public class IngestServiceImpl implements IngestService {
       .apiKey(user.getApiKey())
       .summary(row.get("Description"))
       .amount(amount)
-      .date(LocalDate.parse(row.get("Date")).atStartOfDay())
+      .date(LocalDate.parse(row.get("Date"), DateTimeFormatter.ISO_LOCAL_DATE)
+        .atStartOfDay()
+        .atOffset(ZoneOffset.UTC))
       .build();
   }
 
@@ -186,8 +198,7 @@ public class IngestServiceImpl implements IngestService {
 
     IngestParameter toPersist = ingestMetadata.getParameters();
     toPersist.setLastSeenBalance(ingestMetadata.getNewBalance());
-    toPersist.setLastProcessedDate(ingestMetadata.getNewestDateInEntries()
-      .atStartOfDay());
+    toPersist.setLastProcessedDate(ingestMetadata.getNewestDateInEntries());
     return ingestParameterRepository.save(toPersist)
       .map(params -> {
         ingestMetadata.setParameters(params);
