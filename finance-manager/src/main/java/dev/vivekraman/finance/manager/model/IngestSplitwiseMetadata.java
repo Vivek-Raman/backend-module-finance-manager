@@ -13,19 +13,19 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class IngestMetadata {
+public class IngestSplitwiseMetadata {
   private User user;
   private IngestParameter parameters;
   private OffsetDateTime newestDateInEntries;
   private List<Map<String, String>> newEntries;
   private Double newBalance;
-  private IngestSplitwiseResponseDTO response;
+  private IngestResponseDTO response;
 
-  public static IngestMetadata create(User user, IngestParameter ingestParameters) {
-    IngestMetadata metadata = new IngestMetadata();
+  public static IngestSplitwiseMetadata create(User user, IngestParameter ingestParameters) {
+    IngestSplitwiseMetadata metadata = new IngestSplitwiseMetadata();
     metadata.setUser(user);
     metadata.setParameters(ingestParameters);
-    metadata.setResponse(new IngestSplitwiseResponseDTO());
+    metadata.setResponse(new IngestResponseDTO());
     return metadata;
   }
 }

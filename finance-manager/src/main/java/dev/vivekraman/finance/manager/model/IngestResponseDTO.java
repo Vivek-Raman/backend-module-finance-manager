@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class IngestSplitwiseResponseDTO {
+public class IngestResponseDTO {
   private long recordsAdded;
   private long recordsDeleted;
 }

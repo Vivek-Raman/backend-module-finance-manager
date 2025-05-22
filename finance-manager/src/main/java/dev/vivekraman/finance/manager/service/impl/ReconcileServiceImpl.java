@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import dev.vivekraman.finance.manager.model.IngestMetadata;
+import dev.vivekraman.finance.manager.model.IngestSplitwiseMetadata;
 import dev.vivekraman.finance.manager.model.enums.ExpenseTags;
 import dev.vivekraman.finance.manager.service.api.ExpenseTagService;
 import dev.vivekraman.finance.manager.service.api.ReconcileService;
@@ -21,8 +21,8 @@ public class ReconcileServiceImpl implements ReconcileService {
   private final ExpenseTagService expenseTagService;
 
   @Override
-  public Mono<IngestMetadata> performReconcile(
-    IngestMetadata metadata, List<Map<String, String>> oldRecords) {
+  public Mono<IngestSplitwiseMetadata> performReconcile(
+    IngestSplitwiseMetadata metadata, List<Map<String, String>> oldRecords) {
     // Mark all old records to be re-added.
     metadata.getNewEntries().addAll(oldRecords);
 

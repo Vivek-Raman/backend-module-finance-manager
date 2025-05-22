@@ -21,13 +21,13 @@ import org.springframework.stereotype.Service;
 import dev.vivekraman.finance.manager.entity.Expense;
 import dev.vivekraman.finance.manager.entity.IngestParameter;
 import dev.vivekraman.finance.manager.entity.User;
-import dev.vivekraman.finance.manager.model.IngestMetadata;
-import dev.vivekraman.finance.manager.model.IngestSplitwiseResponseDTO;
+import dev.vivekraman.finance.manager.model.IngestSplitwiseMetadata;
+import dev.vivekraman.finance.manager.model.IngestResponseDTO;
 import dev.vivekraman.finance.manager.model.enums.ExpenseTags;
 import dev.vivekraman.finance.manager.repository.ExpenseRepository;
 import dev.vivekraman.finance.manager.repository.IngestParameterRepository;
 import dev.vivekraman.finance.manager.service.api.ExpenseTagService;
-import dev.vivekraman.finance.manager.service.api.IngestService;
+import dev.vivekraman.finance.manager.service.api.SplitwiseIngestService;
 import dev.vivekraman.finance.manager.service.api.ReconcileService;
 import dev.vivekraman.finance.manager.service.api.UserService;
 import dev.vivekraman.monolith.security.util.AuthUtils;
@@ -38,7 +38,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class IngestServiceImpl implements IngestService {
+public class SplitwiseIngestServiceImpl implements SplitwiseIngestService {
   private final UserService userService;
   private final ReconcileService reconcileService;
   private final ExpenseTagService expenseTagService;
@@ -56,23 +56,23 @@ public class IngestServiceImpl implements IngestService {
   }
 
   @Override
-  public Mono<IngestSplitwiseResponseDTO> ingestSplitwise(
+  public Mono<IngestResponseDTO> ingestSplitwise(
     String groupName, List<Map<String, String>> entries) {
     return AuthUtils.fetchApiKey()
       .flatMap(apiKey -> Mono.zip(
         userService.fetchUser(apiKey),
         ingestParameterRepository.findByApiKeyAndGroupName(apiKey, groupName)
           .defaultIfEmpty(new IngestParameter()),
-        IngestMetadata::create))
+        IngestSplitwiseMetadata::create))
       .flatMap(metadata -> handleNullParameters(metadata, groupName))
       .flatMap(ingestMetadata -> filterEntries(ingestMetadata, entries))
       .flatMap(this::persistNewEntries)
       .flatMap(this::updateParameters)
-      .map(IngestMetadata::getResponse)
-      .defaultIfEmpty(new IngestSplitwiseResponseDTO());
+      .map(IngestSplitwiseMetadata::getResponse)
+      .defaultIfEmpty(new IngestResponseDTO());
   }
 
-  private Mono<IngestMetadata> handleNullParameters(IngestMetadata ingestMetadata, String groupName) {
+  private Mono<IngestSplitwiseMetadata> handleNullParameters(IngestSplitwiseMetadata ingestMetadata, String groupName) {
     if (StringUtils.isBlank(ingestMetadata.getParameters().getApiKey())) {
       return ingestParameterRepository.save(
         IngestParameter.builder()
@@ -90,7 +90,7 @@ public class IngestServiceImpl implements IngestService {
     }
   }
 
-  private Mono<IngestMetadata> filterEntries(IngestMetadata ingestMetadata, List<Map<String, String>> entries) {
+  private Mono<IngestSplitwiseMetadata> filterEntries(IngestSplitwiseMetadata ingestMetadata, List<Map<String, String>> entries) {
     String username = ingestMetadata.getUser().getFullName();
     OffsetDateTime lastProcessedDate = ingestMetadata.getParameters().getLastProcessedDate();
 
@@ -139,7 +139,7 @@ public class IngestServiceImpl implements IngestService {
     return Mono.just(ingestMetadata);
   }
 
-  private Mono<IngestMetadata> persistNewEntries(IngestMetadata ingestMetadata) {
+  private Mono<IngestSplitwiseMetadata> persistNewEntries(IngestSplitwiseMetadata ingestMetadata) {
     List<Expense> toPersist = ingestMetadata.getNewEntries().stream()
       .map(row -> tryCreateExpense(row, ingestMetadata.getUser()))
       .filter(Objects::nonNull)
@@ -161,7 +161,9 @@ public class IngestServiceImpl implements IngestService {
       return null;
     }
 
+    // FIXME: bug!
     double totalAmount = Double.parseDouble(row.get("Cost"));
+    // double othersAmount
     double userAmount = Double.parseDouble(row.get(user.getFullName()));
     double amount = 0f;
     if (totalAmount == userAmount) {
@@ -188,7 +190,7 @@ public class IngestServiceImpl implements IngestService {
       .build();
   }
 
-  private Mono<IngestMetadata> updateParameters(IngestMetadata ingestMetadata) {
+  private Mono<IngestSplitwiseMetadata> updateParameters(IngestSplitwiseMetadata ingestMetadata) {
     if (ingestMetadata.getResponse().getRecordsAdded() <= 0) {
       log.warn("No records added, parameters are not updated.");
       return Mono.just(ingestMetadata);
